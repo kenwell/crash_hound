@@ -5,40 +5,19 @@ from datetime import datetime, timedelta
 
 
 #--- Message senders ----------------------------------------------
-class SenderNotifo:
+class SenderQiyi:
 
-    def __init__(self, api_user, api_token):
-        self.api_user = api_user
-        self.api_token = api_token
-
-    def send_notification(self, name, crash_message):
-        import notifo
-        return notifo.send_notification(
-            self.api_user,
-            self.api_token,
-            to=self.api_user,
-            title=name,
-            msg=crash_message,
-            label='CrashHound'
-        )
-
-
-class SenderTropo:
-
-    def __init__(self, api_token, number):
-        self.api_token = api_token
+    def __init__(self, number):
         self.number = number
 
     def send_notification(self, name, crash_message):
         data = urllib.urlencode({
-            'action': 'create',
-            'token': self.api_token,
-            'numberToDial': self.number.replace(' ', ''),
-            'msg': '%s: %s' % (name, crash_message)
+            'receiverNumber': self.number,
+            'content': '%s: %s' % (name, crash_message),
+            'loginIgnore' : 'true'
         })
 
-        fp = urllib.urlopen('https://api.tropo.com/1.0/sessions',
-                            data)
+        fp = urllib.urlopen('http://msg.qiyi.domain/sms/sendDirectly.action', data)
 
         return fp.read()
 
